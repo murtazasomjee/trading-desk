@@ -318,6 +318,7 @@
   let targetCapital = 30000;
   let startDate   = '2026-02-26';
   let lastRefresh = null;
+  let statusCache = {};   // { TICKER: { status, time } }
   let refreshInterval = null;
   let countdownInterval = null;
   const REFRESH_SECS = 30;
@@ -371,17 +372,18 @@
     document.getElementById('statStart').textContent   = fmt(startCapital);
     document.getElementById('statTarget').textContent  = fmt(targetCapital);
 
-    // % vs starting capital
-    const cvPct  = (curVal - startCapital) / startCapital * 100;
+    // % of starting capital (absolute, not delta)
+    const cvPct   = curVal / startCapital * 100;
     const pnlPct2 = totalPnl / startCapital * 100;
-    const tgtPct  = (targetCapital - startCapital) / startCapital * 100;
+    const tgtPct  = targetCapital / startCapital * 100;
+    const toGo    = Math.max(0, targetCapital - curVal);
 
     const cvEl = document.getElementById('statCurrent');
     cvEl.textContent = fmt(curVal);
     cvEl.className   = 'value ' + (curVal > startCapital ? 'green' : curVal < startCapital ? 'red' : 'blue');
     const cvPctEl = document.getElementById('statCurrentPct');
-    cvPctEl.textContent = (cvPct >= 0 ? '+' : '') + cvPct.toFixed(2) + '% vs start';
-    cvPctEl.className   = 'stat-pct ' + (cvPct > 0 ? 'green' : cvPct < 0 ? 'red' : '');
+    cvPctEl.textContent = cvPct.toFixed(2) + '% of start';
+    cvPctEl.className   = 'stat-pct ' + (curVal > startCapital ? 'green' : curVal < startCapital ? 'red' : '');
 
     const pnlEl = document.getElementById('statPnl');
     pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + fmt(totalPnl);
@@ -391,7 +393,8 @@
     pnlPctEl.className   = 'stat-pct ' + (pnlPct2 > 0 ? 'green' : pnlPct2 < 0 ? 'red' : '');
 
     const tgtPctEl = document.getElementById('statTargetPct');
-    tgtPctEl.textContent = '+' + tgtPct.toFixed(1) + '% gain needed';
+    tgtPctEl.innerHTML = tgtPct.toFixed(1) + '% of start'
+      + '<br><span style="font-size:10px; color:var(--muted);">' + fmt(toGo) + ' to go</span>';
     tgtPctEl.className   = 'stat-pct';
 
     document.getElementById('progressPct').textContent = pct.toFixed(1) + '%';
@@ -437,16 +440,28 @@
         // Status badge: report signal → target hit → stop hit → hold
         const stopVal = parseFloat(p.stop   || 0);
         const tgtVal  = parseFloat(p.target || 0);
-        let statusBadge;
-        if (p.signal === 'SELL') {
-          statusBadge = '<span class="status-badge status-sell">⚠ Sell</span>';
-        } else if (tgtVal > 0 && current >= tgtVal) {
-          statusBadge = '<span class="status-badge status-target">✓ Target</span>';
-        } else if (stopVal > 0 && current <= stopVal) {
-          statusBadge = '<span class="status-badge status-stop">✕ Stop</span>';
-        } else {
-          statusBadge = '<span class="status-badge status-hold">Hold</span>';
+        const sKey = p.signal === 'SELL'               ? 'sell'
+                   : (tgtVal > 0 && current >= tgtVal) ? 'target'
+                   : (stopVal > 0 && current <= stopVal) ? 'stop'
+                   : 'hold';
+        // Track when status last changed (persists across re-renders)
+        const sNow = new Date();
+        if (!statusCache[p.ticker] || statusCache[p.ticker].status !== sKey) {
+          statusCache[p.ticker] = { status: sKey, time: sNow };
         }
+        const sTime    = statusCache[p.ticker].time;
+        const sMins    = Math.floor((sNow - sTime) / 60000);
+        const sLabel   = sMins < 1  ? 'just now'
+                       : sMins < 60 ? sMins + 'm ago'
+                       : sTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const badgeMap = {
+          sell:   '<span class="status-badge status-sell">⚠ Sell</span>',
+          target: '<span class="status-badge status-target">✓ Target</span>',
+          stop:   '<span class="status-badge status-stop">✕ Stop</span>',
+          hold:   '<span class="status-badge status-hold">Hold</span>'
+        };
+        const statusBadge = badgeMap[sKey]
+          + '<div style="font-size:10px; color:var(--muted); margin-top:3px;">' + sLabel + '</div>';
 
         return `<tr>
           <td class="ticker-cell">${p.ticker}</td>
