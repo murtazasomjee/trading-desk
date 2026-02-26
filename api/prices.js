@@ -5,109 +5,96 @@ module.exports = async function handler(req, res) {
   if (!tickers) return res.status(400).json({ error: 'tickers parameter required' });
 
   const tickerList = tickers.split(',').map(t => t.trim().toUpperCase()).filter(Boolean);
-  const results = {};
+  const results    = {};
 
-  const baseHeaders = {
+  const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept': '*/*',
+    'Accept': 'application/json,text/plain,*/*',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Origin': 'https://finance.yahoo.com',
     'Referer': 'https://finance.yahoo.com/',
   };
 
-  // ── Step 1: Obtain Yahoo cookie + crumb (required for authenticated quotes) ──
-  let cookie = '';
-  let crumb  = '';
-  try {
-    // Get session cookie
-    const cookieRes = await fetch('https://finance.yahoo.com/', {
-      headers: baseHeaders,
-      redirect: 'follow',
-    });
-    const raw = cookieRes.headers.get('set-cookie') || '';
-    // Extract A3 or similar session cookie
-    const cookieParts = raw.split(',').map(c => c.split(';')[0].trim()).filter(Boolean);
-    cookie = cookieParts.join('; ');
+  // ── Primary: Yahoo v8 chart, 5-day daily range ──────────────────────────
+  // Gives regularMarketPrice (live) + 5 daily closes so we can get prev close
+  await Promise.all(tickerList.map(async (ticker) => {
+    try {
+      // 1-min intraday: gets the latest tick price during market hours
+      const intraUrl  = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d`;
+      // Daily: gets yesterday's close as prev
+      const dailyUrl  = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`;
 
-    if (cookie) {
-      // Get crumb
-      const crumbRes = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
-        headers: { ...baseHeaders, 'Cookie': cookie },
-      });
-      if (crumbRes.ok) crumb = (await crumbRes.text()).trim();
-    }
-  } catch (_) { /* proceed without auth — will try unauthenticated */ }
+      const [intraRes, dailyRes] = await Promise.all([
+        fetch(intraUrl,  { headers }),
+        fetch(dailyUrl,  { headers }),
+      ]);
 
-  const authHeaders = cookie
-    ? { ...baseHeaders, 'Cookie': cookie }
-    : baseHeaders;
-
-  // ── Step 2: Yahoo v7 quote (primary — returns day change + prev close) ──
-  try {
-    const symbols    = tickerList.join(',');
-    const crumbParam = crumb ? `&crumb=${encodeURIComponent(crumb)}` : '';
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketPreviousClose,regularMarketChange,regularMarketChangePercent,shortName${crumbParam}`;
-    const response = await fetch(url, { headers: authHeaders });
-    if (response.ok) {
-      const data   = await response.json();
-      const quotes = data?.quoteResponse?.result || [];
-      quotes.forEach(q => {
-        results[q.symbol] = {
-          price:     q.regularMarketPrice          ?? null,
-          prev:      q.regularMarketPreviousClose  ?? null,
-          change:    q.regularMarketChange         ?? null,
-          changePct: q.regularMarketChangePercent  ?? null,
-          name:      q.shortName || q.symbol,
-        };
-      });
-    }
-  } catch (_) { /* fall through */ }
-
-  // ── Step 3: v8 chart API fallback (1m interval to get intraday latest) ──
-  await Promise.all(
-    tickerList.filter(t => !results[t]?.price).map(async (ticker) => {
-      try {
-        const crumbParam = crumb ? `&crumb=${encodeURIComponent(crumb)}` : '';
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d${crumbParam}`;
-        const response = await fetch(url, { headers: authHeaders });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data   = await response.json();
-        const result = data?.chart?.result?.[0];
-        const meta   = result?.meta;
-
-        // Pull the most recent 1m close for intraday accuracy
-        let price = meta?.regularMarketPrice ?? null;
-        const closes = result?.indicators?.quote?.[0]?.close || [];
+      // Parse intraday for current price
+      let price = null;
+      if (intraRes.ok) {
+        const d    = await intraRes.json();
+        const meta = d?.chart?.result?.[0]?.meta;
+        price = meta?.regularMarketPrice ?? null;
+        // Walk back to last non-null 1m close for accuracy
+        const closes = d?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
         for (let i = closes.length - 1; i >= 0; i--) {
           if (closes[i] != null) { price = closes[i]; break; }
         }
-
-        const prev      = meta?.chartPreviousClose ?? meta?.regularMarketPreviousClose ?? null;
-        const change    = (price != null && prev != null) ? price - prev : null;
-        const changePct = (price != null && prev != null) ? ((price - prev) / prev * 100) : null;
-        results[ticker] = { price, prev, change, changePct, name: meta?.shortName || ticker };
-      } catch (e) {
-        results[ticker] = { price: null, prev: null, change: null, changePct: null, name: ticker, error: e.message };
       }
-    })
-  );
 
-  // ── Step 4: Stooq CSV fallback for any still-missing tickers ──
+      // Parse daily for prev close (second-to-last close in the series)
+      let prev = null;
+      if (dailyRes.ok) {
+        const d        = await dailyRes.json();
+        const meta     = d?.chart?.result?.[0]?.meta;
+        const dCloses  = d?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+        // If market is open today, the last entry is partial — use second-to-last
+        // chartPreviousClose is the cleanest signal
+        prev = meta?.chartPreviousClose ?? meta?.regularMarketPreviousClose ?? null;
+        if (prev == null && dCloses.length >= 2) {
+          // fallback: second-to-last daily close
+          for (let i = dCloses.length - 2; i >= 0; i--) {
+            if (dCloses[i] != null) { prev = dCloses[i]; break; }
+          }
+        }
+        // If price still null, grab from daily meta
+        if (price == null) price = meta?.regularMarketPrice ?? null;
+      }
+
+      const change    = (price != null && prev != null) ? price - prev : null;
+      const changePct = (price != null && prev != null) ? ((price - prev) / prev * 100) : null;
+      const name      = (() => {
+        try { return JSON.parse(dailyRes.ok ? '' : '{}'); } catch(_) { return ticker; }
+      })();
+
+      results[ticker] = { price, prev, change, changePct, name: ticker };
+    } catch (e) {
+      results[ticker] = { price: null, prev: null, change: null, changePct: null, name: ticker, error: e.message };
+    }
+  }));
+
+  // ── Fallback: Stooq CSV for any ticker that still has no price ──────────
   await Promise.all(
     tickerList.filter(t => !results[t]?.price).map(async (ticker) => {
       try {
-        const url = `https://stooq.com/q/l/?s=${ticker.toLowerCase()}.us&f=sd2t2ohlcv&h&e=csv`;
-        const response = await fetch(url, { headers: baseHeaders });
+        // Stooq daily history — last ~5 rows — gives current close + yesterday's
+        const url      = `https://stooq.com/q/d/l/?s=${ticker.toLowerCase()}.us&i=d`;
+        const response = await fetch(url, { headers });
         if (!response.ok) throw new Error('stooq failed');
-        const text  = await response.text();
-        const lines = text.trim().split('\n');
-        if (lines.length < 2) throw new Error('no data');
-        const cols  = lines[1].split(',');
-        // Format: Symbol,Date,Time,Open,High,Low,Close,Volume
-        const price = parseFloat(cols[6]);
+        const text     = await response.text();
+        const lines    = text.trim().split('\n').filter(l => l && !l.startsWith('Date'));
+        if (lines.length < 1) throw new Error('no data');
+
+        // Last line = today/most recent, second-to-last = yesterday
+        const todayCols = lines[lines.length - 1].split(',');
+        const prevCols  = lines.length >= 2 ? lines[lines.length - 2].split(',') : null;
+
+        const price  = parseFloat(todayCols[4]);   // Close
+        const prev   = prevCols ? parseFloat(prevCols[4]) : null;
+        const change    = (price && prev) ? price - prev : null;
+        const changePct = (price && prev) ? ((price - prev) / prev * 100) : null;
+
         if (!isNaN(price)) {
-          results[ticker] = { price, prev: null, change: null, changePct: null, name: ticker };
+          results[ticker] = { price, prev: isNaN(prev) ? null : prev, change, changePct, name: ticker };
         }
       } catch (_) {
         if (!results[ticker]) {
