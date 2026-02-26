@@ -10,7 +10,22 @@
       "date": "2026-02-26",
       "stop": 185.00,
       "target": 212.00,
-      "rationale": "Monster earnings beat being ignored — reversion opportunity. Q4 EPS $3.81 vs $3.05 expected (+25%), fastest revenue growth in 2 years (+12% YoY), $50B buyback announced, Agentforce at $800M ARR with 29,000 deals. Stock was -28% YTD pre-earnings despite best print in enterprise software history. Market overly punishing AI disruption fears (\"SaaSpocalypse\") — a $50B buyback at these prices is enormous. Coiled spring setup."
+      "rationale": "Monster earnings beat being ignored — reversion opportunity. Q4 EPS $3.81 vs $3.05 expected (+25%), fastest revenue growth in 2 years (+12% YoY), $50B buyback announced, Agentforce at $800M ARR with 29,000 deals. Stock was -28% YTD pre-earnings despite best print in enterprise software history. Market overly punishing AI disruption fears — a $50B buyback at these prices is enormous. Coiled spring setup.",
+      "score": {
+        "catalyst": 5,
+        "technical": 3,
+        "rr": 1,
+        "context": 3,
+        "total": 12,
+        "notes": "Exceptional catalyst and buyback support, but R:R of 1.35:1 is below the 2:1 minimum — stop at $185 is too wide relative to the $212 target. Technical setup is a recovery, not a clean breakout."
+      },
+      "thesisRisk": 2,
+      "thesisKillers": [
+        "Wave of enterprise customers announcing significant headcount reductions (per-seat revenue directly impacted)",
+        "Agentforce ARR growth stalls — next quarter below $1B signals AI narrative not converting to revenue",
+        "Macro shock or sector-wide SaaS multiple compression driven by rising rates or risk-off rotation"
+      ],
+      "reviewNotes": "26/02 AH: Block fires 4,000 people — per-seat risk activated. CRM dropped to $190 in thin AH tape. Thesis weakened but not broken (one customer, $50B buyback still a floor). Risk level raised to 2. Watch pre-market open — if below $188 on volume, reassess. Watch for other enterprise tech companies announcing layoffs in next 48hrs."
     },
     {
       "ticker": "SJM",
@@ -19,7 +34,22 @@
       "date": "2026-02-26",
       "stop": 107.50,
       "target": 121.00,
-      "rationale": "Fresh earnings beat + defensive rotation tailwind. EPS $2.38 vs $2.27, revenue +7% to $2.34B, FCF $487M vs $151M YoY. Coffee segment (Folgers, Café Bustelo, Dunkin') up 23%. Stock-specific move — peers MKC, HRL, CPB all down on the same day. Elliott Management activist pressure adding catalyst. Broke above $109–111 resistance on heavy volume. Day 1 of post-earnings move, not a chase."
+      "rationale": "Fresh earnings beat + defensive rotation tailwind. EPS $2.38 vs $2.27, revenue +7% to $2.34B, FCF $487M vs $151M YoY. Coffee segment (Folgers, Café Bustelo, Dunkin') up 23%. Stock-specific move — peers MKC, HRL, CPB all down on the same day. Elliott Management activist pressure adding catalyst. Broke above $109–111 resistance on heavy volume. Day 1 of post-earnings move, not a chase.",
+      "score": {
+        "catalyst": 4,
+        "technical": 4,
+        "rr": 0,
+        "context": 4,
+        "total": 12,
+        "notes": "Strong setup on 3 of 4 dimensions but R:R of 0.62:1 is structurally dangerous — stop at $107.50 is $8.33 away while target is only $5.18 away. Either the target needs to be raised to $125+ or the stop needs to be tightened to $112 to make the R:R acceptable. Holding given strong catalyst but this is a framework violation."
+      },
+      "thesisRisk": 1,
+      "thesisKillers": [
+        "Earnings revision downward — if restatement or guidance cut emerges in the following weeks",
+        "Consumer staples sector selloff driven by macro data (e.g., strong CPI reducing defensive rotation)",
+        "Elliott Management exits activist position or reduces stake — removes the upward pressure catalyst"
+      ],
+      "reviewNotes": "26/02 Entry: Thesis intact. Clean technical breakout on volume, stock-specific move. Main concern is R:R — structurally below minimum. Monitoring for any weakening in post-earnings momentum. If price stalls at $118 for 2 days without progress toward $121, time-stop applies."
     },
     {
       "ticker": "PYPL",
@@ -28,7 +58,22 @@
       "date": "2026-02-26",
       "stop": 41.50,
       "target": 55.00,
-      "rationale": "Deeply oversold mean-reversion with near-term catalysts. Down ~37% over past year, trading at just 8x forward earnings. Bloomberg reported Stripe acquisition rumours. New CEO Enrique Lores starts March 1. Potential double-bottom forming, RSI severely oversold. Analyst consensus target $64 (+36% upside). High-risk speculative position — entered only after stock held above $44 confirmation level."
+      "rationale": "Deeply oversold mean-reversion with near-term catalysts. Down ~37% over past year, trading at just 8x forward earnings. Bloomberg reported Stripe acquisition rumours. New CEO Enrique Lores starts March 1. Potential double-bottom forming, RSI severely oversold. Analyst consensus target $64 (+36% upside). High-risk speculative position — entered only after stock held above $44 confirmation level.",
+      "score": {
+        "catalyst": 3,
+        "technical": 3,
+        "rr": 5,
+        "context": 2,
+        "total": 13,
+        "notes": "Excellent R:R of 3.33:1 justifies speculative position. Catalyst is rumour-driven (Stripe deal unconfirmed) and CEO transition is a known-unknown. Downtrend still intact structurally. Just passes the 13/20 entry threshold. CEO transition on March 1 is a binary event — watch closely."
+      },
+      "thesisRisk": 1,
+      "thesisKillers": [
+        "Stripe acquisition rumour definitively denied by either party — removes the M&A premium",
+        "New CEO March 1 disappoints on first communication — no new strategy or cuts guidance",
+        "Broader fintech selloff if interest rate expectations shift hawkish"
+      ],
+      "reviewNotes": "26/02 Entry: Thesis intact. Position entered after $44 hold confirmed. Binary event on March 1 (CEO transition) — will reassess thesis immediately after. R:R is best of the three current positions at 3.33:1. Monitor Stripe news closely."
     }
   ],
   "tradeLog": [
