@@ -157,7 +157,13 @@
     display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 600;
     letter-spacing: 0.5px; text-transform: uppercase; border-radius: 3px; border: 1px solid;
   }
-  .status-hold { color: var(--blue); border-color: #b3d4f0; background: #eaf4fd; }
+  .status-hold   { color: var(--blue);  border-color: #b3d4f0; background: #eaf4fd; }
+  .status-sell   { color: #fff;         border-color: var(--red);   background: var(--red); }
+  .status-target { color: #fff;         border-color: #1a7f3c; background: #1a7f3c; }
+  .status-stop   { color: var(--red);   border-color: #f5b8c0; background: #fef0f2; }
+  .stat-pct { font-size: 11px; margin-top: 4px; font-weight: 500; color: var(--muted); }
+  .stat-pct.green { color: var(--green); }
+  .stat-pct.red   { color: var(--red); }
   .empty-state { text-align: center; padding: 48px; color: var(--muted); background: var(--surface2); font-size: 13px; }
 
   /* ── Trade log ── */
@@ -229,7 +235,6 @@
     <span class="pulse" id="pulseDot"></span>
     <span id="liveStatus">Connecting…</span>
   </div>
-  <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ Refresh now</button>
 </div>
 
 <!-- Goal section -->
@@ -242,14 +247,17 @@
     <div class="goal-stat">
       <label>Current Value</label>
       <div class="value blue" id="statCurrent">—</div>
+      <div class="stat-pct" id="statCurrentPct"></div>
     </div>
     <div class="goal-stat">
       <label>Total P&amp;L</label>
       <div class="value" id="statPnl">—</div>
+      <div class="stat-pct" id="statPnlPct"></div>
     </div>
     <div class="goal-stat">
       <label>Target</label>
       <div class="value" id="statTarget">—</div>
+      <div class="stat-pct" id="statTargetPct"></div>
     </div>
   </div>
   <div class="progress-bar-wrap">
@@ -298,7 +306,7 @@
 </div>
 
 <div class="cowork-note">
-  Positions managed by <strong>Claude in Cowork</strong> — tell Claude about your trades and this page updates automatically.
+  Positions managed by <strong>Claude in Cowork</strong>
 </div>
 
 <script>
@@ -363,13 +371,28 @@
     document.getElementById('statStart').textContent   = fmt(startCapital);
     document.getElementById('statTarget').textContent  = fmt(targetCapital);
 
+    // % vs starting capital
+    const cvPct  = (curVal - startCapital) / startCapital * 100;
+    const pnlPct2 = totalPnl / startCapital * 100;
+    const tgtPct  = (targetCapital - startCapital) / startCapital * 100;
+
     const cvEl = document.getElementById('statCurrent');
     cvEl.textContent = fmt(curVal);
     cvEl.className   = 'value ' + (curVal > startCapital ? 'green' : curVal < startCapital ? 'red' : 'blue');
+    const cvPctEl = document.getElementById('statCurrentPct');
+    cvPctEl.textContent = (cvPct >= 0 ? '+' : '') + cvPct.toFixed(2) + '% vs start';
+    cvPctEl.className   = 'stat-pct ' + (cvPct > 0 ? 'green' : cvPct < 0 ? 'red' : '');
 
     const pnlEl = document.getElementById('statPnl');
     pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + fmt(totalPnl);
     pnlEl.className   = 'value ' + (totalPnl > 0 ? 'green' : totalPnl < 0 ? 'red' : '');
+    const pnlPctEl = document.getElementById('statPnlPct');
+    pnlPctEl.textContent = (pnlPct2 >= 0 ? '+' : '') + pnlPct2.toFixed(2) + '% of capital';
+    pnlPctEl.className   = 'stat-pct ' + (pnlPct2 > 0 ? 'green' : pnlPct2 < 0 ? 'red' : '');
+
+    const tgtPctEl = document.getElementById('statTargetPct');
+    tgtPctEl.textContent = '+' + tgtPct.toFixed(1) + '% gain needed';
+    tgtPctEl.className   = 'stat-pct';
 
     document.getElementById('progressPct').textContent = pct.toFixed(1) + '%';
     document.getElementById('progressFill').style.width = pct + '%';
@@ -408,18 +431,35 @@
           chgStr = `<span class="${cls}">${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${chgPct >= 0 ? '+' : ''}${chgPct.toFixed(2)}%)</span>`;
         }
 
+        // Colour: green above entry, red below, default text if flat
+        const priceColor = current > entry ? 'var(--green)' : current < entry ? 'var(--red)' : 'var(--text)';
+
+        // Status badge: report signal → target hit → stop hit → hold
+        const stopVal = parseFloat(p.stop   || 0);
+        const tgtVal  = parseFloat(p.target || 0);
+        let statusBadge;
+        if (p.signal === 'SELL') {
+          statusBadge = '<span class="status-badge status-sell">⚠ Sell</span>';
+        } else if (tgtVal > 0 && current >= tgtVal) {
+          statusBadge = '<span class="status-badge status-target">✓ Target</span>';
+        } else if (stopVal > 0 && current <= stopVal) {
+          statusBadge = '<span class="status-badge status-stop">✕ Stop</span>';
+        } else {
+          statusBadge = '<span class="status-badge status-hold">Hold</span>';
+        }
+
         return `<tr>
           <td class="ticker-cell">${p.ticker}</td>
           <td>${shares}</td>
           <td style="font-variant-numeric:tabular-nums;">$${entry.toFixed(4)}</td>
-          <td style="font-variant-numeric:tabular-nums; font-weight:600;">$${current.toFixed(2)}</td>
+          <td style="font-variant-numeric:tabular-nums; font-weight:600; color:${priceColor};">$${current.toFixed(2)}</td>
           <td>${chgStr}</td>
-          <td style="font-variant-numeric:tabular-nums;">$${mv.toFixed(2)}</td>
+          <td style="font-variant-numeric:tabular-nums; color:${priceColor};">$${mv.toFixed(2)}</td>
           <td class="${pnlCls}" style="font-variant-numeric:tabular-nums;">${pnlStr}</td>
-          <td style="color:var(--red); font-variant-numeric:tabular-nums;">${parseFloat(p.stop||0) > 0 ? '$'+parseFloat(p.stop).toFixed(2) : '—'}</td>
-          <td style="color:var(--green); font-variant-numeric:tabular-nums;">${parseFloat(p.target||0) > 0 ? '$'+parseFloat(p.target).toFixed(2) : '—'}</td>
+          <td style="color:var(--red); font-variant-numeric:tabular-nums;">${stopVal > 0 ? '$'+stopVal.toFixed(2) : '—'}</td>
+          <td style="color:var(--green); font-variant-numeric:tabular-nums;">${tgtVal > 0 ? '$'+tgtVal.toFixed(2) : '—'}</td>
           <td>${days}d</td>
-          <td><span class="status-badge status-hold">Hold</span></td>
+          <td>${statusBadge}</td>
         </tr>`;
       }).join('');
     }
