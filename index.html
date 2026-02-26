@@ -392,8 +392,16 @@
         const pnlCls  = pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
         const pnlStr  = (pnl >= 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(2) + ' (' + (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%)';
 
+        const liveData = livePrices[p.ticker];
         let chgStr = '—';
-        if (prev != null) {
+        if (liveData?.change != null) {
+          // use pre-calculated day change from Yahoo quote API
+          const chg    = liveData.change;
+          const chgPct = liveData.changePct;
+          const cls    = chg >= 0 ? 'chg-pos' : 'chg-neg';
+          chgStr = `<span class="${cls}">${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${chgPct >= 0 ? '+' : ''}${chgPct.toFixed(2)}%)</span>`;
+        } else if (prev != null) {
+          // fallback: calculate from prev close
           const chg    = current - prev;
           const chgPct = (chg / prev * 100);
           const cls    = chg >= 0 ? 'chg-pos' : 'chg-neg';

@@ -3,9 +3,9 @@
   "target": 30000,
   "startDate": "2026-02-26",
   "positions": [
-    { "ticker": "CRM",  "shares": 30,  "entry": 196.50,  "date": "2026-02-26", "stop": 0, "target": 0 },
-    { "ticker": "SJM",  "shares": 44,  "entry": 115.825, "date": "2026-02-26", "stop": 0, "target": 0 },
-    { "ticker": "PYPL", "shares": 100, "entry": 44.6165, "date": "2026-02-26", "stop": 0, "target": 0 }
+    { "ticker": "CRM",  "shares": 30,  "entry": 196.50,  "date": "2026-02-26", "stop": 185.00, "target": 212.00 },
+    { "ticker": "SJM",  "shares": 44,  "entry": 115.825, "date": "2026-02-26", "stop": 107.50, "target": 121.00 },
+    { "ticker": "PYPL", "shares": 100, "entry": 44.6165, "date": "2026-02-26", "stop": 41.50,  "target": 55.00  }
   ],
   "tradeLog": [
     { "type": "BUY", "ticker": "CRM",  "shares": 30,  "price": 196.50,  "date": "26/02/2026, 13:20:00" },
