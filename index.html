@@ -202,6 +202,39 @@
   .wls-card-date   { font-size: 10px; color: var(--muted); flex: 0 0 auto; }
   .wls-empty       { font-size: 12px; color: var(--muted); padding: 14px 0; text-align: center; font-style: italic; }
 
+  /* ── Trade Rationale ── */
+  .rationale-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,66,122,0.06);
+  }
+  .rationale-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .rationale-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    background: var(--surface2);
+  }
+  .rationale-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .rationale-type-buy  { background: #eaf4fd; color: var(--blue); border: 1px solid #b3d4f0; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; }
+  .rationale-type-sell { background: #fef0f2; color: var(--red);  border: 1px solid #f5b8c0; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; }
+  .rationale-ticker    { font-weight: 700; font-size: 14px; color: var(--navy); }
+  .rationale-date      { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .rationale-text      { font-size: 12px; color: var(--text); line-height: 1.55; }
+
   /* ── Trade log ── */
   .trade-log {
     background: var(--surface);
@@ -351,6 +384,16 @@
       <div class="wls-col-header">📉 Losers <span class="wls-range">&lt; −5% return</span></div>
       <div id="wlsLosers"><div class="wls-empty">No closed positions yet</div></div>
     </div>
+  </div>
+</div>
+
+<!-- Trade Rationale -->
+<div class="rationale-section">
+  <div class="section-header" style="margin-bottom:0;">
+    <div class="section-title">Trade Rationale</div>
+  </div>
+  <div class="rationale-grid" id="rationaleGrid">
+    <div style="font-size:13px;color:var(--muted);">Loading…</div>
   </div>
 </div>
 
@@ -539,6 +582,9 @@
     // Winners / Losers / Stallers
     renderWLS();
 
+    // Trade Rationale
+    renderRationale();
+
     // Trade log
     const logEl = document.getElementById('tradeLog');
     if (tradeLog.length === 0) {
@@ -569,23 +615,32 @@
     });
 
     // Process each SELL into a closed-trade record
-    const closed = [];
+    const closedRaw = [];
     tradeLog.forEach(t => {
       if (t.type !== 'SELL') return;
       const buy       = buyMap[t.ticker] || {};
-      const entry     = buy.entry   || null;
+      const entry     = buy.entry || null;
       const shares    = parseFloat(t.shares);
       const exitPrice = parseFloat(t.price);
       const pnl       = t.pnl != null
                           ? parseFloat(t.pnl)
                           : (entry != null ? (exitPrice - entry) * shares : null);
-      const costBasis = entry != null ? entry * shares : null;
-      const pnlPct    = (pnl != null && costBasis) ? (pnl / costBasis * 100) : null;
-      const category  = pnlPct == null ? 'staller'
-                      : pnlPct > 5    ? 'winner'
-                      : pnlPct < -5   ? 'loser'
-                      : 'staller';
-      closed.push({ ticker: t.ticker, shares, exitPrice, entry, pnl, pnlPct, category, date: t.date });
+      closedRaw.push({ ticker: t.ticker, shares, exitPrice, entry, pnl, date: t.date });
+    });
+
+    // Total realized P&L — used to compute contribution %
+    const totalRealizedPnl = closedRaw.reduce((s, c) => s + (c.pnl || 0), 0);
+
+    const closed = closedRaw.map(c => {
+      // % of total realized P&L; fall back to sign-only if total is 0
+      const pnlPct = (c.pnl != null && totalRealizedPnl !== 0)
+                       ? (c.pnl / totalRealizedPnl * 100)
+                       : null;
+      const category = pnlPct == null ? 'staller'
+                     : pnlPct > 5    ? 'winner'
+                     : pnlPct < -5   ? 'loser'
+                     : 'staller';
+      return { ...c, pnlPct, category };
     });
 
     const winners  = closed.filter(c => c.category === 'winner');
@@ -598,7 +653,7 @@
                        ? (c.pnl >= 0 ? '+' : '') + '$' + Math.abs(c.pnl).toFixed(2)
                        : '—';
       const pctStr = c.pnlPct != null
-                       ? (c.pnlPct >= 0 ? '+' : '') + c.pnlPct.toFixed(2) + '%'
+                       ? (c.pnlPct >= 0 ? '+' : '') + c.pnlPct.toFixed(1) + '% of P&L'
                        : '';
       return `<div class="wls-card">
         <span class="wls-card-ticker">${c.ticker}</span>
@@ -612,6 +667,45 @@
     document.getElementById('wlsWinners').innerHTML  = winners.length  ? winners.map(cardHtml).join('')  : empty;
     document.getElementById('wlsStallers').innerHTML = stallers.length ? stallers.map(cardHtml).join('') : empty;
     document.getElementById('wlsLosers').innerHTML   = losers.length   ? losers.map(cardHtml).join('')   : empty;
+  }
+
+  // ── Trade Rationale ──────────────────────────────────────────────────
+  function renderRationale() {
+    const grid = document.getElementById('rationaleGrid');
+
+    // Collect rationale from tradeLog entries (BUY + SELL) — keeps history
+    const cards = tradeLog
+      .filter(t => t.rationale)
+      .map(t => {
+        const typeClass = t.type === 'BUY' ? 'rationale-type-buy' : 'rationale-type-sell';
+        return `<div class="rationale-card">
+          <div class="rationale-card-head">
+            <span class="${typeClass}">${t.type}</span>
+            <span class="rationale-ticker">${t.ticker}</span>
+            <span class="rationale-date">${t.date}</span>
+          </div>
+          <div class="rationale-text">${t.rationale}</div>
+        </div>`;
+      });
+
+    // Also show rationale for open positions that may not have a tradeLog entry yet
+    const loggedTickers = new Set(tradeLog.filter(t => t.rationale).map(t => t.ticker + t.type));
+    positions.forEach(p => {
+      if (p.rationale && !loggedTickers.has(p.ticker + 'BUY')) {
+        cards.push(`<div class="rationale-card">
+          <div class="rationale-card-head">
+            <span class="rationale-type-buy">BUY</span>
+            <span class="rationale-ticker">${p.ticker}</span>
+            <span class="rationale-date">${p.date}</span>
+          </div>
+          <div class="rationale-text">${p.rationale}</div>
+        </div>`);
+      }
+    });
+
+    grid.innerHTML = cards.length
+      ? cards.join('')
+      : '<div style="font-size:12px;color:var(--muted);font-style:italic;">No rationale recorded yet.</div>';
   }
 
   // ── Live status bar ───────────────────────────────────────────────────

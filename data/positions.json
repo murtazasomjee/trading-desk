@@ -3,13 +3,58 @@
   "target": 30000,
   "startDate": "2026-02-26",
   "positions": [
-    { "ticker": "CRM",  "shares": 30,  "entry": 196.50,  "date": "2026-02-26", "stop": 185.00, "target": 212.00 },
-    { "ticker": "SJM",  "shares": 44,  "entry": 115.825, "date": "2026-02-26", "stop": 107.50, "target": 121.00 },
-    { "ticker": "PYPL", "shares": 100, "entry": 44.6165, "date": "2026-02-26", "stop": 41.50,  "target": 55.00  }
+    {
+      "ticker": "CRM",
+      "shares": 30,
+      "entry": 196.50,
+      "date": "2026-02-26",
+      "stop": 185.00,
+      "target": 212.00,
+      "rationale": "Monster earnings beat being ignored — reversion opportunity. Q4 EPS $3.81 vs $3.05 expected (+25%), fastest revenue growth in 2 years (+12% YoY), $50B buyback announced, Agentforce at $800M ARR with 29,000 deals. Stock was -28% YTD pre-earnings despite best print in enterprise software history. Market overly punishing AI disruption fears (\"SaaSpocalypse\") — a $50B buyback at these prices is enormous. Coiled spring setup."
+    },
+    {
+      "ticker": "SJM",
+      "shares": 44,
+      "entry": 115.825,
+      "date": "2026-02-26",
+      "stop": 107.50,
+      "target": 121.00,
+      "rationale": "Fresh earnings beat + defensive rotation tailwind. EPS $2.38 vs $2.27, revenue +7% to $2.34B, FCF $487M vs $151M YoY. Coffee segment (Folgers, Café Bustelo, Dunkin') up 23%. Stock-specific move — peers MKC, HRL, CPB all down on the same day. Elliott Management activist pressure adding catalyst. Broke above $109–111 resistance on heavy volume. Day 1 of post-earnings move, not a chase."
+    },
+    {
+      "ticker": "PYPL",
+      "shares": 100,
+      "entry": 44.6165,
+      "date": "2026-02-26",
+      "stop": 41.50,
+      "target": 55.00,
+      "rationale": "Deeply oversold mean-reversion with near-term catalysts. Down ~37% over past year, trading at just 8x forward earnings. Bloomberg reported Stripe acquisition rumours. New CEO Enrique Lores starts March 1. Potential double-bottom forming, RSI severely oversold. Analyst consensus target $64 (+36% upside). High-risk speculative position — entered only after stock held above $44 confirmation level."
+    }
   ],
   "tradeLog": [
-    { "type": "BUY", "ticker": "CRM",  "shares": 30,  "price": 196.50,  "date": "26/02/2026, 13:20:00" },
-    { "type": "BUY", "ticker": "SJM",  "shares": 44,  "price": 115.825, "date": "26/02/2026, 13:20:00" },
-    { "type": "BUY", "ticker": "PYPL", "shares": 100, "price": 44.6165, "date": "26/02/2026, 13:19:00" }
+    {
+      "type": "BUY",
+      "ticker": "CRM",
+      "shares": 30,
+      "price": 196.50,
+      "date": "26/02/2026, 13:20:00",
+      "rationale": "Monster earnings beat being ignored — reversion opportunity. Q4 EPS $3.81 vs $3.05 (+25%), $50B buyback, Agentforce $800M ARR. Stock -28% YTD pre-earnings despite best enterprise software print in years."
+    },
+    {
+      "type": "BUY",
+      "ticker": "SJM",
+      "shares": 44,
+      "price": 115.825,
+      "date": "26/02/2026, 13:20:00",
+      "rationale": "Fresh earnings beat + defensive rotation. EPS $2.38 vs $2.27, FCF $487M vs $151M, Coffee +23%. Breakout above $109–111 resistance. Elliott Management activist catalyst. Day 1 post-earnings move."
+    },
+    {
+      "type": "BUY",
+      "ticker": "PYPL",
+      "shares": 100,
+      "price": 44.6165,
+      "date": "26/02/2026, 13:19:00",
+      "rationale": "Oversold mean-reversion play. Down ~37% YoY, 8x forward earnings. Stripe acquisition rumours (Bloomberg), new CEO March 1, double-bottom forming. Analyst target $64 (+36%). Speculative allocation."
+    }
   ]
 }
