@@ -150,11 +150,59 @@ When fully invested and a high-conviction new setup appears, rotation may be con
 A morning report that identifies only one pick is likely the result of a too-narrow scan. Before declaring the report complete:
 
 - Scan at minimum **4 distinct sectors** (e.g., tech, consumer, healthcare, industrials).
+- Scan at minimum **1 macro layer** (rates, commodities, crypto, geopolitical — see §4.4).
 - Review at minimum **10 catalyst-driven candidates** before filtering to scored picks.
 - If fewer than 3 candidates pass the threshold after a genuine broad scan, state explicitly that the market is in a low-opportunity environment and explain why.
 - Never present a single-pick report as exhaustive without acknowledging the scan width.
 
 **Lesson from mock report (26 Feb 2026):** Initial report identified only NTNX. When pushed, a broader scan found CELH (+37% EPS beat, 117% YoY) and DELL (record FY26 + AI guidance). The opportunity set was there; the first scan was too narrow.
+
+### 4.4 Macro, Geopolitical & ETF Plays
+The strategy is not limited to individual equities. Macro and thematic plays are valid when grounded in a real-world catalyst — not just a theme. These expand the opportunity set and often provide cleaner setups than single stocks because they remove company-specific noise (no earnings surprise, no CEO scandal, no one bad quarter).
+
+**Why these belong in the strategy:**
+The real world drives markets — rate decisions, geopolitical events, commodity supply shocks, regime changes, inflation prints. Ignoring the macro layer means operating in a micro bubble while the biggest moves happen around you. A rising-rate environment that kills growth stocks is the same environment that sends TLT down and IBIT sideways. Understanding the macro doesn't just find new trades — it validates or undermines the existing book.
+
+**The core requirement: a catalyst event within the hold window.**
+"Gold is a good store of value" is not a trade. "Gold is pulling back to the 21-day MA after a run on safe-haven demand, with next week's CPI likely to reignite the bid" is a trade with structure. Every macro/ETF play must have an identifiable near-term event or technical trigger — not just a multi-month theme.
+
+**Scoring card interpretation for macro plays:**
+
+| Dimension | Adaptation for Macro/ETF |
+|-----------|--------------------------|
+| **Catalyst** | Use geopolitical events, scheduled macro data (CPI, FOMC, NFP), supply/demand shocks, regulatory decisions. Score the same scale — a surprise Fed pivot is a 5, a vague "inflation fears" narrative is a 2. |
+| **Technical** | ETFs typically have cleaner technicals than individual stocks — more liquid, less gap risk, respected moving averages. Score normally. A pullback to the 21-day in an established trend scores well. |
+| **R:R** | Calculate identically: (target − entry) ÷ (entry − stop). Note: ETF moves are measured in %, not gap fills. Tighten stops to technical levels to preserve R:R. |
+| **Context** | For macro plays, context extends to: dollar direction, real yields, global equity sentiment, and cross-asset flows. A GLD trade in a rising-dollar environment is fighting the context. |
+
+**Instrument-specific guidance:**
+
+*GLD (Gold ETF) — best macro fit*
+- Driven by: real yields (inverse), dollar (inverse), geopolitical risk premium, central bank buying.
+- Thesis killers: surprise dollar surge, de-escalation of geopolitical tension, surprise Fed hawkishness.
+- Hold window: 3–7 days on catalyst events; trend-following holds can extend.
+- Scoring note: GLD trends well and respects technical levels. In an established uptrend, pullbacks to the 21-day MA are high-probability entries. Context score should reflect dollar/yield environment.
+
+*IBIT (Bitcoin ETF) — valid with specific catalyst only*
+- Driven by: institutional inflow/outflow data, regulatory developments, halving cycle, macro risk-on/off.
+- NOT a valid thesis: "crypto is strong right now." Bitcoin sentiment is not a confirmed catalyst.
+- Thesis killers: major regulatory crackdown, exchange failure/contagion event, macro risk-off forcing de-leveraging.
+- Scoring note: High volatility makes 3:1 R:R structurally achievable, but false breakouts are frequent. Require a specific news catalyst (e.g., ETF inflow record, SEC clarity, major institutional allocation announcement) before entering. Score R:R conservatively — use wider stops to account for noise.
+
+*TLT (Long Treasury ETF) — best around scheduled macro events*
+- Driven by: Fed rate expectations, CPI/PCE prints, recession fears, flight-to-safety.
+- Most useful as a 1–2 day event trade around scheduled catalysts (FOMC decision, CPI release). Swing holding between events is slow and low-R:R.
+- Thesis killers: surprise hot inflation print, unexpected Fed hawkishness, strong labour market data.
+- Scoring note: Low day-to-day volatility makes the R:R math challenging without a scheduled catalyst. Only enter when a specific data print is due within the hold window and consensus is skewed enough to create asymmetry.
+
+*Thematic / Sector ETFs (SMH, XLF, XLE, ARKK, etc.) — strong fit*
+- These combine sector trend with a shared catalyst across the basket, removing single-stock risk.
+- Example: SMH after NVDA beats — the entire semiconductor basket benefits, with less single-stock risk than buying NVDA directly at an elevated price.
+- Score the same way as individual stocks. The catalyst dimension reflects the shared sector event; the technical dimension reflects the ETF chart, not the individual components.
+- Second-order risk check still applies: for SMH, the second-order risk is a China export restriction on semiconductors. For XLF, it's a surprise credit event at a major bank.
+
+**Position sizing:**
+Use the same $500 max risk rule. Because ETF moves are percentage-based rather than driven by gap fills, be careful about stop placement — a stop that is technically correct but only 0.5% away will be hit by normal noise in a liquid ETF. Aim for stops at meaningful technical levels (prior lows, moving averages) even if that means the position size becomes smaller.
 
 ---
 
@@ -167,7 +215,8 @@ Every trading day, the morning report will cover:
 3. **Thesis status update** — 🟢/🟡/🔴 for each position with one-line reasoning.
 4. **Thesis killer check** — explicitly name each position's 3 killers and state whether any has been triggered or moved materially closer since the prior session.
 5. **Action items** — specific things to watch or decisions to make at open.
-6. **New pick candidates** (if any) — must include full 4-dimension score, R:R, entry range, stop, target, position size, and thesis killers before recommendation. See Section 4.3 for minimum scan width.
+6. **New pick candidates** (if any) — must include full 4-dimension score, R:R, entry range, stop, target, position size, and thesis killers before recommendation. See §4.3 for minimum scan width and §4.4 for macro/ETF scoring guidance.
+7. **Macro layer read** — one-paragraph summary of where rates, dollar, gold, and crypto are sitting and whether they present any trade setups or risks to the existing book.
 
 ---
 
