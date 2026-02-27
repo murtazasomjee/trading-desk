@@ -1,7 +1,7 @@
 # Trading Desk — Strategy Rulebook
 **Challenge:** $15,452.95 → $30,000 in 30 days
 **Style:** Catalyst-driven swing trades, 3–5 day holds
-**Last updated:** 26 Feb 2026
+**Last updated:** 27 Feb 2026
 
 ---
 
@@ -38,6 +38,11 @@ Every new trade must be scored across four dimensions before entry. A trade scor
 - Only enter within the defined entry range. If price has moved more than 2% beyond the entry range, do not enter.
 - Entry is only valid if volume is above the 20-day average on the entry candle or session.
 - Prefer entries on minor pullbacks to VWAP or the prior day's close rather than chasing the initial spike.
+
+### 1.7 No Pre-Earnings Entries
+- **Never enter a position with an earnings report pending within the hold window.** Holding through earnings is a binary coin flip, not a swing trade.
+- Post-earnings plays (entering after the report is out) are allowed and preferred — the catalyst is confirmed, the market's initial reaction is known, and R:R can be calculated against a real stop.
+- The correct time to assess an earnings play is **after the report, not before.** See Section 4.1 for the AH earnings window rule.
 
 ### 1.5 Thesis Killers — Required at Entry
 - Before entering any trade, define exactly 3 events that would invalidate the thesis.
@@ -113,19 +118,60 @@ Every new trade must be scored across four dimensions before entry. A trade scor
 
 ---
 
-## 4. Morning Report Format
+## 4. Special Entry Contexts
+
+### 4.1 Post-Earnings AH Entry Window
+When a company reports after hours with a significant beat, there is a short entry window before the tape moves too far.
+
+- **Window:** First 15–30 minutes of AH trading after the report is published.
+- **Why it closes:** Thin AH volume means price can gap several percent quickly. Once it moves >3% from the initial post-report level, the original R:R is usually broken.
+- **Process:** As soon as a strong earnings report hits, immediately calculate: entry (current AH price), stop (below key technical support or AH low), target (pre-earnings resistance or analyst consensus). Score it. If it passes 13/20 and R:R ≥ 2:1, enter.
+- **If the window closes:** Do not chase into AH. Wait for a pullback setup the next morning. Score it fresh from the new level — the prior AH setup is void.
+- **Lesson from DELL (26 Feb 2026):** DELL reported a strong beat ($3.89 EPS vs $3.52 expected). At $125 initial AH price, R:R was 3.4:1 — a strong pass. By the time analysis was completed, price had moved to $134 and R:R flipped to 0.5:1. Entry window had closed. Correct action: wait for morning pullback, re-score.
+
+### 4.2 Rotation Rules
+When fully invested and a high-conviction new setup appears, rotation may be considered — but only under strict conditions.
+
+**Rotation is only valid if ALL of the following are true:**
+1. The new setup scores **≥ 15/20** (materially better than the minimum).
+2. The new setup has **R:R ≥ 3:1** (preferred tier, not minimum).
+3. The position being rotated out scores **< 13/20** under current conditions (i.e., it would fail entry today).
+4. The position being rotated out has no imminent catalyst within 2 trading days that could recover value.
+5. The rotation does not incur a loss greater than 50% of the maximum risk budget ($250) unless the thesis is broken.
+
+**Rotation process:**
+- Score both positions fully before deciding.
+- State explicitly: "I am rotating because [old position] fails entry criteria today and [new position] scores [X]/20 with [Y:1] R:R."
+- If the old position would still pass entry today (≥ 13/20), hold it — do not rotate purely on opportunity cost.
+
+**Lesson from DELL/CRM (26 Feb 2026):** CRM→DELL rotation was proposed when DELL was at $125. CRM was at 12/20 (pre-framework violation, declining thesis). The rotation logic was directionally correct. However, the AH entry window for DELL closed before the rotation could execute. Always check the entry window before initiating a rotation plan.
+
+### 4.3 Minimum Scan Width for Morning Reports
+A morning report that identifies only one pick is likely the result of a too-narrow scan. Before declaring the report complete:
+
+- Scan at minimum **4 distinct sectors** (e.g., tech, consumer, healthcare, industrials).
+- Review at minimum **10 catalyst-driven candidates** before filtering to scored picks.
+- If fewer than 3 candidates pass the threshold after a genuine broad scan, state explicitly that the market is in a low-opportunity environment and explain why.
+- Never present a single-pick report as exhaustive without acknowledging the scan width.
+
+**Lesson from mock report (26 Feb 2026):** Initial report identified only NTNX. When pushed, a broader scan found CELH (+37% EPS beat, 117% YoY) and DELL (record FY26 + AI guidance). The opportunity set was there; the first scan was too narrow.
+
+---
+
+## 5. Morning Report Format
 
 Every trading day, the morning report will cover:
 
 1. **Overnight developments** — any news on open positions or their thesis killers.
 2. **Pre-market read** — where each position is trading vs. entry and stop.
 3. **Thesis status update** — 🟢/🟡/🔴 for each position with one-line reasoning.
-4. **Action items** — specific things to watch or decisions to make at open.
-5. **New pick candidates** (if any) — must include full 4-dimension score, R:R, entry range, stop, target, position size, and thesis killers before recommendation.
+4. **Thesis killer check** — explicitly name each position's 3 killers and state whether any has been triggered or moved materially closer since the prior session.
+5. **Action items** — specific things to watch or decisions to make at open.
+6. **New pick candidates** (if any) — must include full 4-dimension score, R:R, entry range, stop, target, position size, and thesis killers before recommendation. See Section 4.3 for minimum scan width.
 
 ---
 
-## 5. Mid-Day Check-In Format
+## 6. Mid-Day Check-In Format
 
 1. **Price vs. target progress** — where each position sits on the entry→target journey.
 2. **Volume check** — confirming or warning.
@@ -135,7 +181,7 @@ Every trading day, the morning report will cover:
 
 ---
 
-## 6. New Pick Recommendation Template
+## 7. New Pick Recommendation Template
 
 Before any new pick is recommended, it must be presented in this format:
 
@@ -171,7 +217,7 @@ Score notes: [Any caveats or close calls on scoring]
 
 ---
 
-## 7. Goal Math Awareness
+## 8. Goal Math Awareness
 
 - **Target:** $30,000 from $15,452.95 = +94.1% return required.
 - **Realistic path:** Multiple trade cycles, compounding gains. 11% per cycle × 7 cycles ≈ target (approximate).
@@ -181,7 +227,7 @@ Score notes: [Any caveats or close calls on scoring]
 
 ---
 
-## 8. Framework Violations Log
+## 9. Framework Violations Log
 
 | Date | Ticker | Violation | Notes |
 |------|--------|-----------|-------|
