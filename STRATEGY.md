@@ -1,5 +1,5 @@
 # Trading Desk — Strategy Rulebook
-**Challenge:** $15,452.95 → $30,000 in 30 days
+**Challenge:** $15,452.95 → $30,000 in 30 trading days (~6 calendar weeks)
 **Style:** Catalyst-driven swing trades, 3–5 day holds
 **Last updated:** 27 Feb 2026
 
@@ -23,16 +23,22 @@ Every new trade must be scored across four dimensions before entry. A trade scor
 - Current book audit: CRM 12/20 ✗, SJM 12/20 ✗, PYPL 13/20 ✓. CRM and SJM were entered before this framework existed — they are held on thesis merit but would not pass entry today at current stop/target levels.
 
 ### 1.2 R:R Minimum — Hard Floor
-- **Minimum acceptable R:R: 2:1**. Preferred: 3:1 or better.
+- **Minimum acceptable R:R: 3:1**. Target: 4:1 or better.
+- The prior floor of 2:1 was designed for capital preservation over the long run. At 2:1 R:R and a 50% win rate, expectancy barely covers slippage. At 3:1 R:R and 50% win rate, expectancy doubles. At 4:1 R:R you can be wrong 60% of the time and still be net positive.
 - Calculate from actual entry price, stop, and target — not approximate ranges.
-- If R:R is below 2:1 at intended entry, either: (a) tighten the stop to a defensible technical level, or (b) raise the target to a clear resistance level. If neither is possible without distorting the trade, **do not enter**.
+- If R:R is below 3:1 at intended entry, either: (a) tighten the stop to a defensible technical level, or (b) raise the target to a clear resistance level. If neither is possible without distorting the trade, **do not enter**.
+- **Note on the scoring card:** The R:R dimension scores 3/5 at 2–2.5:1. Under the updated floor, any trade scoring R:R ≤ 3 on this dimension (i.e., below 2.5:1) requires explicit justification in Score notes — a mechanical pass on the scorecard does not override this floor.
 
-### 1.3 Position Sizing — Fixed Dollar Risk
-- **Max risk per trade: $500** (approximately 3.2% of starting capital).
-- Position size = $500 / (entry price − stop price).
-- Example: PYPL entry $44.62, stop $41.50 → risk $3.12/share → size = 160 shares.
-- This keeps maximum drawdown controlled regardless of stock price or volatility.
-- Do not override sizing based on conviction — conviction is reflected in the score, not the size.
+### 1.3 Position Sizing — Percentage-Based Risk (Compounding)
+- **Standard risk per trade: 3.25% of current account equity**, measured at the start of each trading day.
+- Position size = (account equity × 0.0325) / (entry price − stop price).
+- Example at $15,453: risk = $502. At $18,000: risk = $585. At $22,000: risk = $715. The size grows as the account grows — this is the compounding mechanism that makes the target achievable.
+- **Conviction ladder** — high-conviction setups earn larger allocation, not just the same minimum:
+  - Score 13–14/20: standard sizing (3.25% risk)
+  - Score 15–16/20: enhanced sizing (4.5% risk)
+  - Score 17–20/20: maximum sizing (6.0% risk, hard cap regardless of account size)
+- Hard cap: no single position can represent more than 35% of account equity at entry.
+- **Why this replaced fixed $500:** Fixed dollar risk doesn't compound. After winning trades, the risk percentage shrinks and the account growth stalls. Percentage-based risk ensures every winning cycle funds a proportionally larger next cycle.
 
 ### 1.4 Entry Trigger — No Chasing
 - Only enter within the defined entry range. If price has moved more than 2% beyond the entry range, do not enter.
@@ -77,7 +83,7 @@ Every new trade must be scored across four dimensions before entry. A trade scor
 - Is volume confirming the move or drying up?
 - Has anything changed in the sector since the open?
 
-**Time Stop trigger:** If a position has made less than 33% of the expected move (entry → target) within 2 full trading days, flag for exit review. The catalyst is likely stale.
+**Time Stop trigger:** If a position has made less than 25% of the expected move (entry → target) by the close of Day 2, **exit at open on Day 3. No review, no exceptions.** In a 30-trading-day challenge, a stalling trade is not just a bad trade — it is capital that is not compounding. Opportunity cost is a real loss. The catalyst is stale; redeploy immediately.
 
 ### 2.3 End-of-Day Review (Every Trading Day, ~10 Minutes)
 **Four questions for each position:**
@@ -101,15 +107,26 @@ Every new trade must be scored across four dimensions before entry. A trade scor
 
 ### 3.1 Planned Exits (In Order of Priority)
 1. **Thesis invalidation** — original reason for the trade is no longer true. Exit regardless of price, even if profitable.
-2. **Time stop** — less than 33% of expected move in 2 full trading days. Exit and redeploy.
+2. **Time stop** — less than 25% of expected move by close of Day 2. Exit at open Day 3, automatically, no review.
 3. **Pre-market gap >3% against on meaningful news** — do not wait for open. Assess at open, exit into first bounce if thesis is uncertain.
 4. **Stop loss hit** — price reaches the defined stop. This is the last-resort mechanical exit.
 
-### 3.2 Partial Exit Rule — Lock In Profits
-- When a position reaches **50% of the distance to target**, sell half the position.
-- Immediately move the stop on the remaining half to **breakeven** (entry price).
-- This converts the remaining position into a free trade — maximum upside, zero downside on the original capital.
-- Example: CRM entry $196.50, target $212. At $204.25 (50% of the way), sell 15 shares. Move stop on remaining 15 shares to $196.50.
+### 3.2 Partial Exit Rule — Tiered by Conviction
+The partial exit rule applies differently depending on the trade's score. High-conviction trades deserve to run; borderline trades deserve protection.
+
+**Scores 13–15/20 (minimum-pass trades):**
+- At 50% of the distance to target, sell half the position.
+- Immediately move the stop on the remaining half to breakeven (entry price).
+- This converts the remaining half into a free trade — protected downside, open upside.
+- Example: CRM entry $196.50, target $212. At $204.25, sell 15 shares. Move stop on remaining 15 to $196.50.
+
+**Scores 16–20/20 (high-conviction trades):**
+- No partial exit. Let the full position run to target.
+- At 50% of the distance to target, tighten the stop to a technical level that protects at least 60% of unrealised gains — but do not sell shares.
+- Exit the full position only at target, on thesis break, or on time stop.
+- Why: The partial exit on a 3:1 trade reduces your effective average win to approximately 2:1. On your best setups, that cost is too high. Ride your winners.
+
+**Universal rule:** Never let a position that has reached 75% of its target distance turn into a loss. At 75%, stop moves to at minimum 40% of target distance from entry, regardless of score.
 
 ### 3.3 Target Hit
 - When price reaches the full target, **exit the full remaining position**.
@@ -244,7 +261,7 @@ Thesis: [2–3 sentence explanation]
 Entry range: $X – $Y
 Stop loss: $Z (reason: [technical level])
 Target: $A (reason: [resistance level])
-Position size: [shares] ([calculation: $500 risk / stop distance])
+Position size: [shares] ([calculation: account equity × risk% / stop distance per share])
 R:R: [X:1]
 Hold time: [X–Y days]
 
@@ -268,11 +285,30 @@ Score notes: [Any caveats or close calls on scoring]
 
 ## 8. Goal Math Awareness
 
-- **Target:** $30,000 from $15,452.95 = +94.1% return required.
-- **Realistic path:** Multiple trade cycles, compounding gains. 11% per cycle × 7 cycles ≈ target (approximate).
-- The strategy prioritises **risk-adjusted return per trade** over swinging for large single gains.
-- A 100% win rate at 3:1 R:R is impossible. Assuming 50% win rate, 3:1 R:R trades yield net positive expectancy. The compounding does the work if discipline holds.
-- **Do not override the scoring or R:R rules to "catch up"** if the challenge is behind pace. Bigger bets on weaker setups is how challenges fail.
+**Target:** $30,000 from $15,452.95 = +94.1% return required over 30 trading days (~6 calendar weeks).
+
+**The correct cycle math:**
+30 trading days at 3–5 day average holds = 6–10 complete trade cycles. To compound $15,452.95 to $30,000 over this range:
+- Over 6 cycles: each cycle must net ~+11.7% (1.117⁶ = 1.94)
+- Over 8 cycles: each cycle must net ~+8.6% (1.086⁸ = 1.94)
+- Over 10 cycles: each cycle must net ~+6.9% (1.069¹⁰ = 1.94)
+
+**What generates 8–12% net per cycle:**
+With 3.25% percentage-based risk, 3:1 R:R, and 2–3 concurrent positions per cycle:
+- Single winning trade: +9.75% of equity
+- Single losing trade: −3.25% of equity
+- At 60% win rate across 3 trades per cycle: (1.8 × 9.75%) − (1.2 × 3.25%) = +17.55% − 3.9% = ~+13.6% per cycle gross
+- After slippage, commissions, and flat trades: realistically **+8–11% net per cycle**
+
+This means the target is achievable with disciplined execution — it does not require extraordinary luck or outlier wins. It requires consistent 3:1+ R:R setups, a 55–60% win rate, full deployment of capital into qualifying trades, and the compounding to be respected by sizing up as the account grows.
+
+**What breaks the math:**
+- Holding losing positions past the time stop (dead capital)
+- Sizing trades at fixed $500 rather than % of equity (compounding breaks)
+- Taking 2:1 R:R trades out of impatience (expectancy collapses)
+- Partial-exiting high-conviction trades at halfway (best wins get capped)
+
+**Do not override the scoring or R:R rules to "catch up"** if the challenge is behind pace. Bigger bets on weaker setups is precisely how challenges fail in weeks 3–4. The edge comes from discipline held consistently, not from a single redemption trade.
 
 ---
 
