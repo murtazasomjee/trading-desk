@@ -142,9 +142,21 @@ When a company reports after hours with a significant beat, there is a short ent
 
 - **Window:** First 15–30 minutes of AH trading after the report is published.
 - **Why it closes:** Thin AH volume means price can gap several percent quickly. Once it moves >3% from the initial post-report level, the original R:R is usually broken.
-- **Process:** As soon as a strong earnings report hits, immediately calculate: entry (current AH price), stop (below key technical support or AH low), target (pre-earnings resistance or analyst consensus). Score it. If it passes 13/20 and R:R ≥ 2:1, enter.
+- **Process:** As soon as a strong earnings report hits, immediately calculate: entry (current AH price), stop (below key technical support or AH low), target (pre-earnings resistance or analyst consensus). Score it. If it passes 13/20 and R:R ≥ 3:1, enter.
 - **If the window closes:** Do not chase into AH. Wait for a pullback setup the next morning. Score it fresh from the new level — the prior AH setup is void.
 - **Lesson from DELL (26 Feb 2026):** DELL reported a strong beat ($3.89 EPS vs $3.52 expected). At $125 initial AH price, R:R was 3.4:1 — a strong pass. By the time analysis was completed, price had moved to $134 and R:R flipped to 0.5:1. Entry window had closed. Correct action: wait for morning pullback, re-score.
+
+### 4.1a Gap Trade Stop Placement — Do Not Default to Gap Bottom
+For post-earnings gap setups (next-morning entries after an AH report), the stop must be the **tightest technically defensible level within the gap** — not automatically the bottom of the full gap range.
+
+**Three valid stop levels for gap trades (in order of preference for R:R):**
+1. **Gap-open price / first 30-minute session low** — tightest defensible stop. If the stock cannot hold the level it opened at, the gap thesis is broken.
+2. **Mid-gap VWAP or prior AH session low** — moderate stop. Allows more noise but still tied to a real technical level.
+3. **Bottom of the full gap range (prior close)** — widest stop. Only use if the gap is narrow (<3%) and the prior close is a meaningful support level.
+
+**Why this matters:** Using the gap bottom as the default stop produces unnecessarily wide risk that breaks the R:R math and causes valid setups to be rejected. The gap thesis only requires the stock to hold above where it gapped — not above where it gapped *from*.
+
+**Lesson from DELL (27 Feb 2026):** At $134.77, the correct stop was $131 (gap-open support), not $127 (gap bottom). With a $131 stop: R:R = (147 − 134.77) / (134.77 − 131) = 3.24:1 — a valid 16/20 enhanced-sizing trade. Using $127 made the required target $158, which appeared too aggressive. DELL reached $147 the same day without touching $131. The conservative stop placement caused a valid setup to be incorrectly rejected. Cost: ~$2,250 in missed profit.
 
 ### 4.2 Rotation Rules
 When fully invested and a high-conviction new setup appears, rotation may be considered — but only under strict conditions.
